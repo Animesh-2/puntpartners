@@ -7,6 +7,27 @@ const TextEditor = () => {
   const [selectedFontWeight, setSelectedFontWeight] = useState("400");
   const [isItalic, setIsItalic] = useState(false);
 
+  // Function to load saved data from local storage
+  useEffect(() => {
+    const savedText = localStorage.getItem("text");
+    const savedFontFamily = localStorage.getItem("selectedFontFamily");
+    const savedFontWeight = localStorage.getItem("selectedFontWeight");
+    const savedIsItalic = localStorage.getItem("isItalic");
+
+    if (savedText) setText(savedText);
+    if (savedFontFamily) setSelectedFontFamily(savedFontFamily);
+    if (savedFontWeight) setSelectedFontWeight(savedFontWeight);
+    if (savedIsItalic) setIsItalic(savedIsItalic === "true");
+  }, []);
+
+  // Function to save data to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("text", text);
+    localStorage.setItem("selectedFontFamily", selectedFontFamily);
+    localStorage.setItem("selectedFontWeight", selectedFontWeight);
+    localStorage.setItem("isItalic", isItalic.toString());
+  }, [text, selectedFontFamily, selectedFontWeight, isItalic]);
+
   useEffect(() => {
     const fetchFonts = async () => {
       try {
@@ -40,24 +61,28 @@ const TextEditor = () => {
     name: font,
   }));
 
-  const fontVariants = selectedFontFamily
-    ? Object.keys(fonts[selectedFontFamily])
-    : [];
+  let fontVariants = [];
+  let fontWeightOptions = [];
+  let hasItalicOption = false;
+  let fontUrl = "";
 
-  const fontWeightOptions = fontVariants.filter(
-    (variant) => !variant.includes("italic")
-  );
-  const hasItalicOption = fontVariants.some((variant) =>
-    variant.includes("italic")
-  );
+  if (fonts[selectedFontFamily]) {
+    fontVariants = Object.keys(fonts[selectedFontFamily]);
+    fontWeightOptions = fontVariants.filter(
+      (variant) => !variant.includes("italic")
+    );
+    hasItalicOption = fontVariants.some((variant) =>
+      variant.includes("italic")
+    );
 
-  const selectedVariant = isItalic
-    ? `${selectedFontWeight}italic`
-    : selectedFontWeight;
-  const fontUrl = fonts[selectedFontFamily]?.[selectedVariant];
+    const selectedVariant = isItalic
+      ? `${selectedFontWeight}italic`
+      : selectedFontWeight;
+    fontUrl = fonts[selectedFontFamily]?.[selectedVariant];
+  }
 
   useEffect(() => {
-    if (fontUrl) {
+    if (fontUrl && selectedFontFamily) {
       const style = document.createElement("style");
       style.innerHTML = `
         @font-face {
@@ -102,8 +127,7 @@ const TextEditor = () => {
         </label>
 
         <label>
-          {" "}
-          variant
+          Variant
           <select
             id="fontWeight"
             onChange={handleFontWeightChange}
