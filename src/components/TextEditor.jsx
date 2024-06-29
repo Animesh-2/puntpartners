@@ -10,7 +10,7 @@ const TextEditor = () => {
   useEffect(() => {
     const fetchFonts = async () => {
       try {
-        const response = await fetch(`db.json`); 
+        const response = await fetch(`db.json`);
         const data = await response.json();
         setFonts(data);
       } catch (error) {
@@ -47,7 +47,9 @@ const TextEditor = () => {
   const fontWeightOptions = fontVariants.filter(
     (variant) => !variant.includes("italic")
   );
-  const hasItalicOption = fontVariants.some((variant) => variant.includes("italic"));
+  const hasItalicOption = fontVariants.some((variant) =>
+    variant.includes("italic")
+  );
 
   const selectedVariant = isItalic
     ? `${selectedFontWeight}italic`
@@ -83,30 +85,38 @@ const TextEditor = () => {
           justifyContent: "space-around",
         }}
       >
-        <select
-          id="fontFamily"
-          onChange={handleFontFamilyChange}
-          value={selectedFontFamily}
-          style={{ width: "200px" }}
-        >
-          {fontsArray.map((font) => (
-            <option key={font.id} value={font.id}>
-              {font.name}
-            </option>
-          ))}
-        </select>
-        <select
-          id="fontWeight"
-          onChange={handleFontWeightChange}
-          value={selectedFontWeight}
-          style={{ width: "200px" }}
-        >
-          {fontWeightOptions.map((weight) => (
-            <option key={weight} value={weight}>
-              {weight}
-            </option>
-          ))}
-        </select>
+        <label>
+          Font Family
+          <select
+            id="fontFamily"
+            onChange={handleFontFamilyChange}
+            value={selectedFontFamily}
+            style={{ width: "200px", margin: "0 5px" }}
+          >
+            {fontsArray.map((font) => (
+              <option key={font.id} value={font.id}>
+                {font.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          {" "}
+          variant
+          <select
+            id="fontWeight"
+            onChange={handleFontWeightChange}
+            value={selectedFontWeight}
+            style={{ width: "200px", margin: "0 5px" }}
+          >
+            {fontWeightOptions.map((weight) => (
+              <option key={weight} value={weight}>
+                {weight}
+              </option>
+            ))}
+          </select>
+        </label>
         {hasItalicOption && (
           <label>
             <input
