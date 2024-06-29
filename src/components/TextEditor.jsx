@@ -4,7 +4,7 @@ const TextEditor = () => {
   const [fonts, setFonts] = useState({});
   const [text, setText] = useState("");
   const [selectedFontFamily, setSelectedFontFamily] = useState("");
-  const [selectedFontWeight, setSelectedFontWeight] = useState("400");
+  const [selectedFontWeight, setSelectedFontWeight] = useState("");
   const [isItalic, setIsItalic] = useState(false);
 
   // Function to load saved data from local storage
@@ -54,6 +54,15 @@ const TextEditor = () => {
 
   const handleItalicChange = (e) => {
     setIsItalic(e.target.checked);
+  };
+
+  const handleReset = () => {
+    setText("");
+    setSelectedFontFamily("");
+    setSelectedFontWeight("");
+    setIsItalic(false);
+
+    localStorage.clear();
   };
 
   const fontsArray = Object.keys(fonts).map((font) => ({
@@ -165,6 +174,7 @@ const TextEditor = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
+      <button onClick={handleReset}>RESET</button>
     </div>
   );
 };
